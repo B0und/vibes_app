@@ -5,6 +5,7 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router'
+import StocksPage from './pages/StocksPage'
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -13,7 +14,7 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: HomePage,
+  component: StocksPage,
 })
 
 const aboutRoute = createRoute({
@@ -115,43 +116,6 @@ function RootLayout() {
         </div>
       </footer>
     </div>
-  )
-}
-
-function HomePage() {
-  return (
-    <section className="hero">
-      <div className="hero-copy">
-        <p className="eyebrow">Volume 07: Atmosphere</p>
-        <h1>Spaces that feel alive, interfaces that feel effortless.</h1>
-        <p className="lead">
-          We build digital worlds with cinematic rhythm, tactile details, and
-          calm clarity. The goal is always the same: make people want to linger.
-        </p>
-        <div className="cta-row">
-          <button className="primary-btn">Start a project</button>
-          <button className="ghost-btn">See the reel</button>
-        </div>
-      </div>
-      <div className="hero-panel">
-        <div className="panel-card">
-          <p className="panel-label">Featured</p>
-          <h3>Solstice Audio</h3>
-          <p>
-            A boutique music brand with a warm, dimensional storefront and a
-            sound-first shopping flow.
-          </p>
-        </div>
-        <div className="panel-card">
-          <p className="panel-label">Live</p>
-          <h3>Driftwell Retreat</h3>
-          <p>
-            A hospitality experience layered with gentle motion, misty imagery,
-            and tactile microcopy.
-          </p>
-        </div>
-      </div>
-    </section>
   )
 }
 

@@ -76,6 +76,229 @@
   animation: fade-up 0.7s ease both;
 }
 
+.stocks-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.filters-panel {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 20px;
+  padding: 22px;
+  border-radius: 22px;
+  background: var(--panel);
+  box-shadow: 0 18px 40px rgba(32, 25, 20, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.filters-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filters-header h1 {
+  font-size: 1.6rem;
+  margin: 8px 0 0;
+  font-family: 'Fraunces', serif;
+}
+
+.filter-group {
+  display: grid;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-dark);
+}
+
+.filter-group input,
+.filter-group select {
+  border-radius: 12px;
+  border: 1px solid rgba(40, 32, 25, 0.15);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--dark);
+}
+
+.range-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.helper {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.filters-summary {
+  display: grid;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(40, 32, 25, 0.1);
+}
+
+.summary-label {
+  margin: 0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+.summary-value {
+  margin: 6px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.table-panel {
+  display: flex;
+}
+
+.table-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 22px 50px rgba(32, 25, 20, 0.1);
+  display: grid;
+  gap: 20px;
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.table-toolbar h2 {
+  margin: 6px 0 8px;
+  font-family: 'Fraunces', serif;
+}
+
+.table-meta {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+.table-wrapper {
+  border-radius: 18px;
+  border: 1px solid rgba(40, 32, 25, 0.1);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.stocks-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.stocks-table th,
+.stocks-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(40, 32, 25, 0.08);
+  text-align: left;
+}
+
+.stocks-table th {
+  background: rgba(248, 243, 234, 0.7);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.stocks-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.sort-btn {
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ticker {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.company {
+  font-weight: 500;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(228, 182, 134, 0.25);
+  color: var(--accent-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.trend {
+  font-weight: 600;
+}
+
+.trend.up {
+  color: #216352;
+}
+
+.trend.down {
+  color: #9c3a2b;
+}
+
+.rating {
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 28px;
+  color: var(--muted);
+}
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .hero {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -215,6 +438,22 @@
   .site-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .stocks-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-panel {
+    position: static;
+  }
+
+  .table-toolbar {
+    flex-direction: column;
+  }
+
+  .table-meta {
+    text-align: left;
   }
 
   .hero,
