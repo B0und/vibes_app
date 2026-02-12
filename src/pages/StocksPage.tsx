@@ -98,7 +98,6 @@ export default function StocksPage() {
 
   const data = query.data?.data ?? []
   const sectors = query.data?.meta.sectors ?? []
-  console.log("rerender");
   
 
   const columns = useMemo<ColumnDef<Stock>[]>(
