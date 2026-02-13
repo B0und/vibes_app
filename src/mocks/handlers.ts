@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
 
 type Stock = {
   id: string
@@ -11,6 +11,23 @@ type Stock = {
   marketCap: number
   rating: 'Buy' | 'Hold' | 'Sell'
   lastUpdated: string
+}
+
+type Bond = {
+  id: string
+  name: string
+  issuer: string
+  rating: 'AAA' | 'AA' | 'A' | 'BBB' | 'BB'
+  coupon: number
+  maturity: string
+  yieldToMaturity: number
+  duration: number
+  price: number
+  currency: 'USD' | 'EUR'
+  nextCall: string | null
+  sector: string
+  size: number
+  lastTraded: string
 }
 
 const stocks: Stock[] = [
@@ -376,12 +393,98 @@ const stocks: Stock[] = [
   },
 ]
 
+const bonds: Bond[] = [
+  {
+    id: 'bond-001',
+    name: 'Aurora Transit 2036',
+    issuer: 'Aurora Transit Authority',
+    rating: 'AA',
+    coupon: 3.75,
+    maturity: '2036-09-15',
+    yieldToMaturity: 4.18,
+    duration: 8.4,
+    price: 98.62,
+    currency: 'USD',
+    nextCall: '2031-09-15',
+    sector: 'Municipal',
+    size: 1200000000,
+    lastTraded: '2026-02-11T13:58:00Z',
+  },
+  {
+    id: 'bond-002',
+    name: 'Northbridge Health 2031',
+    issuer: 'Northbridge Health Group',
+    rating: 'BBB',
+    coupon: 5.25,
+    maturity: '2031-03-01',
+    yieldToMaturity: 5.48,
+    duration: 4.9,
+    price: 101.05,
+    currency: 'USD',
+    nextCall: null,
+    sector: 'Healthcare',
+    size: 850000000,
+    lastTraded: '2026-02-11T13:52:00Z',
+  },
+  {
+    id: 'bond-003',
+    name: 'Solara Grid 2040',
+    issuer: 'Solara Power Holdings',
+    rating: 'A',
+    coupon: 4.4,
+    maturity: '2040-11-30',
+    yieldToMaturity: 4.86,
+    duration: 10.6,
+    price: 96.4,
+    currency: 'USD',
+    nextCall: '2035-11-30',
+    sector: 'Utilities',
+    size: 1500000000,
+    lastTraded: '2026-02-11T14:02:00Z',
+  },
+  {
+    id: 'bond-004',
+    name: 'Meridian Ports 2029',
+    issuer: 'Meridian Ports & Logistics',
+    rating: 'BB',
+    coupon: 6.1,
+    maturity: '2029-07-15',
+    yieldToMaturity: 6.45,
+    duration: 3.1,
+    price: 99.24,
+    currency: 'USD',
+    nextCall: null,
+    sector: 'Industrials',
+    size: 420000000,
+    lastTraded: '2026-02-11T13:48:00Z',
+  },
+  {
+    id: 'bond-005',
+    name: 'Lumen Fiber 2038',
+    issuer: 'Lumen Fiber Networks',
+    rating: 'A',
+    coupon: 4.95,
+    maturity: '2038-05-01',
+    yieldToMaturity: 5.12,
+    duration: 9.3,
+    price: 97.88,
+    currency: 'EUR',
+    nextCall: '2034-05-01',
+    sector: 'Communications',
+    size: 960000000,
+    lastTraded: '2026-02-11T13:55:00Z',
+  },
+]
+
 const sectors = Array.from(new Set(stocks.map((stock) => stock.sector)))
 
 const parseNumber = (value: string | null) =>
   value === null || value.trim() === '' ? undefined : Number(value)
 
 export const handlers = [
+  http.all('*', async () => {
+    await delay(1000)
+  }),
   http.get('/api/stocks', ({ request }: { request: Request }) => {
     const url = new URL(request.url)
     const search = url.searchParams.get('search')?.toLowerCase() ?? ''
@@ -421,5 +524,27 @@ export const handlers = [
         sectors,
       },
     })
+  }),
+  http.get('/api/bonds', () => {
+    const options = bonds.map((bond) => ({
+      id: bond.id,
+      name: bond.name,
+      issuer: bond.issuer,
+      rating: bond.rating,
+    }))
+
+    return HttpResponse.json({
+      data: options,
+      meta: { total: options.length },
+    })
+  }),
+  http.get('/api/bonds/:id', ({ params }) => {
+    const bond = bonds.find((item) => item.id === params.id)
+
+    if (!bond) {
+      return new HttpResponse(null, { status: 404 })
+    }
+
+    return HttpResponse.json({ data: bond })
   }),
 ]

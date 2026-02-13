@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
   Link,
   Outlet,
@@ -6,6 +8,56 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 import StocksPage from './pages/StocksPage'
+
+type BondOption = {
+  id: string
+  name: string
+  issuer: string
+  rating: 'AAA' | 'AA' | 'A' | 'BBB' | 'BB'
+}
+
+type Bond = BondOption & {
+  coupon: number
+  maturity: string
+  yieldToMaturity: number
+  duration: number
+  price: number
+  currency: 'USD' | 'EUR'
+  nextCall: string | null
+  sector: string
+  size: number
+  lastTraded: string
+}
+
+const percentFormatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
+
+const compactFormatter = new Intl.NumberFormat('en-US', {
+  notation: 'compact',
+  maximumFractionDigits: 1,
+})
+
+const fetchBondOptions = async () => {
+  const response = await fetch('/api/bonds')
+
+  if (!response.ok) {
+    throw new Error('Unable to load bond options')
+  }
+
+  return (await response.json()) as { data: BondOption[] }
+}
+
+const fetchBondDetail = async (bondId: string) => {
+  const response = await fetch(`/api/bonds/${bondId}`)
+
+  if (!response.ok) {
+    throw new Error('Unable to load bond detail')
+  }
+
+  return (await response.json()) as { data: Bond }
+}
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -120,31 +172,158 @@ function RootLayout() {
 }
 
 function AboutPage() {
+  const [selectedBondId, setSelectedBondId] = useState<string | undefined>(undefined)
+
+  const optionsQuery = useQuery({
+    queryKey: ['bond-options'],
+    queryFn: fetchBondOptions,
+  })
+
+  const detailQuery = useQuery({
+    queryKey: ['bond-detail', { id: selectedBondId }],
+    queryFn: () => fetchBondDetail(selectedBondId!),
+    enabled: Boolean(selectedBondId),
+  })
+
+  const options = optionsQuery.data?.data ?? []
+  const bond = detailQuery.data?.data
+  const selectedOption = options.find((option) => option.id === selectedBondId)
+  const cardCurrency = bond?.currency ?? 'USD'
+  const priceFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: cardCurrency,
+    maximumFractionDigits: 2,
+  })
+
   return (
-    <section className="page-grid">
-      <div>
-        <p className="eyebrow">Our story</p>
-        <h1>We choreograph the quiet moments.</h1>
+    <section className="page-grid about-bonds">
+      <div className="about-copy">
+        <p className="eyebrow">About</p>
+        <h1>Bond dossier, curated in real time.</h1>
         <p className="lead">
-          Vibes Studio is a multidisciplinary team of designers, developers,
-          and strategists. We pair visual warmth with technical precision so
-          every product feels intentional.
+          Choose a bond from the mock exchange to load live attributes,
+          pricing, and timing signals. Data is served via MSW and TanStack Query.
         </p>
+        <div className="bond-select">
+          <label htmlFor="bond-select">Select bond</label>
+          <select
+            id="bond-select"
+            value={selectedBondId}
+            onChange={(event) => setSelectedBondId(event.target.value)}
+            disabled={optionsQuery.isLoading || optionsQuery.isError}
+          >
+            <option value="">
+              {optionsQuery.isLoading
+                ? 'Loading bonds…'
+                : optionsQuery.isError
+                  ? 'Unable to load bonds'
+                  : 'Choose a bond'}
+            </option>
+            {options.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name} · {option.issuer}
+              </option>
+            ))}
+          </select>
+          <p className="helper">
+            {optionsQuery.isLoading
+              ? 'Syncing the bond list.'
+              : `${options.length} instruments available.`}
+          </p>
+        </div>
       </div>
-      <div className="info-stack">
-        <div className="info-card">
-          <h3>Small, focused crew</h3>
-          <p>
-            Senior-only team with a low project cap. We stay hands-on from
-            concept to launch.
-          </p>
-        </div>
-        <div className="info-card">
-          <h3>Crafted with rhythm</h3>
-          <p>
-            We design the flow first, then fill in texture, motion, and story.
-          </p>
-        </div>
+      <div className="bond-card">
+        {detailQuery.isFetching && selectedBondId ? (
+          <div className="bond-loading">
+            <p className="panel-label">Loading bond</p>
+            <h3>Pulling the latest trade tape.</h3>
+          </div>
+        ) : detailQuery.isError ? (
+          <div className="bond-loading">
+            <p className="panel-label">Unable to load</p>
+            <h3>We could not retrieve that bond.</h3>
+            <p className="lead">Try another selection from the list.</p>
+          </div>
+        ) : bond ? (
+          <>
+            <div className="bond-header">
+              <div>
+                <p className="panel-label">{bond.sector}</p>
+                <h2>{bond.name}</h2>
+                <p className="bond-issuer">{bond.issuer}</p>
+              </div>
+              <div className="bond-rating">
+                <span>{bond.rating}</span>
+                <p>Rating</p>
+              </div>
+            </div>
+            <div className="bond-metrics">
+              <div>
+                <p className="panel-label">Coupon</p>
+                <p className="metric-value">{percentFormatter.format(bond.coupon)}%</p>
+              </div>
+              <div>
+                <p className="panel-label">Yield to maturity</p>
+                <p className="metric-value">
+                  {percentFormatter.format(bond.yieldToMaturity)}%
+                </p>
+              </div>
+              <div>
+                <p className="panel-label">Duration</p>
+                <p className="metric-value">{bond.duration.toFixed(1)} yrs</p>
+              </div>
+              <div>
+                <p className="panel-label">Price</p>
+                <p className="metric-value">{priceFormatter.format(bond.price)}</p>
+              </div>
+            </div>
+            <div className="bond-divider" />
+            <div className="bond-details">
+              <div>
+                <p className="panel-label">Maturity</p>
+                <p>{new Date(bond.maturity).toLocaleDateString('en-US')}</p>
+              </div>
+              <div>
+                <p className="panel-label">Next call</p>
+                <p>
+                  {bond.nextCall
+                    ? new Date(bond.nextCall).toLocaleDateString('en-US')
+                    : 'Non-callable'}
+                </p>
+              </div>
+              <div>
+                <p className="panel-label">Issue size</p>
+                <p>{compactFormatter.format(bond.size)}</p>
+              </div>
+              <div>
+                <p className="panel-label">Last traded</p>
+                <p>
+                  {new Date(bond.lastTraded).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
+              </div>
+            </div>
+            <div className="bond-footer">
+              <div>
+                <p className="panel-label">Selected</p>
+                <p>
+                  {selectedOption?.name ?? bond.name} · {bond.currency}
+                </p>
+              </div>
+              <button className="primary-btn">Request term sheet</button>
+            </div>
+          </>
+        ) : (
+          <div className="bond-empty">
+            <p className="panel-label">No bond selected</p>
+            <h3>Select a bond to reveal its profile.</h3>
+            <p className="lead">
+              Each card updates with pricing and risk metrics in real time.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   )
