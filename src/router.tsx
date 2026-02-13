@@ -8,6 +8,7 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 import StocksPage from './pages/StocksPage'
+import ServicesPage from './pages/ServicesPage'
 
 type BondOption = {
   id: string
@@ -324,35 +325,6 @@ function AboutPage() {
             </p>
           </div>
         )}
-      </div>
-    </section>
-  )
-}
-
-function ServicesPage() {
-  return (
-    <section className="page-grid">
-      <div>
-        <p className="eyebrow">Capabilities</p>
-        <h1>From concept decks to shipping code.</h1>
-        <p className="lead">
-          We run focused engagements with a clear end-state. Each service is
-          modular, so you can start where you need momentum most.
-        </p>
-      </div>
-      <div className="service-list">
-        <div className="service-card">
-          <h3>Brand systems</h3>
-          <p>Identity, tone, motion language, and visual kits.</p>
-        </div>
-        <div className="service-card">
-          <h3>Product design</h3>
-          <p>UX flows, interaction choreography, and design systems.</p>
-        </div>
-        <div className="service-card">
-          <h3>Full-stack build</h3>
-          <p>React, motion, and polished handoff-ready interfaces.</p>
-        </div>
       </div>
     </section>
   )

@@ -544,6 +544,154 @@
   font-size: 0.85rem;
 }
 
+.services-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(400px, 520px);
+  gap: 32px;
+  align-items: start;
+}
+
+.services-intro {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+
+.services-intro h1 {
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  margin: 8px 0;
+  font-family: 'Fraunces', serif;
+}
+
+.market-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.summary-tile {
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 24px rgba(32, 25, 20, 0.06);
+  text-align: center;
+}
+
+.summary-metric {
+  margin: 6px 0 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.services-form-card {
+  background: var(--panel);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 22px 50px rgba(32, 25, 20, 0.12);
+  position: sticky;
+  top: 24px;
+}
+
+.form-loading {
+  display: grid;
+  gap: 12px;
+  align-content: center;
+  text-align: center;
+  min-height: 400px;
+}
+
+.services-form {
+  display: grid;
+  gap: 24px;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.form-header h2 {
+  margin: 6px 0 0;
+  font-family: 'Fraunces', serif;
+}
+
+.form-prefill {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-group {
+  display: grid;
+  gap: 8px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-dark);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  border-radius: 12px;
+  border: 1px solid rgba(40, 32, 25, 0.15);
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--dark);
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(228, 182, 134, 0.2);
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+  border-color: #9c3a2b;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.error-text {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9c3a2b;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 8px;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -597,5 +745,21 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+  }
+
+  .services-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .services-form-card {
+    position: static;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .market-summary {
+    grid-template-columns: 1fr;
   }
 }

@@ -393,6 +393,69 @@ const stocks: Stock[] = [
   },
 ]
 
+type ServiceBrief = {
+  clientName: string
+  email: string
+  firm: string
+  portfolioSize: number
+  mandateType: 'discretionary' | 'advisory' | 'execution-only'
+  riskProfile: 'conservative' | 'moderate' | 'aggressive'
+  investmentHorizon: 'short' | 'medium' | 'long'
+  assetClass: 'equities' | 'fixed-income' | 'alternatives' | 'multi-asset'
+  instrument: string
+  notes: string
+}
+
+type Instrument = {
+  id: string
+  name: string
+  ticker: string
+}
+
+const serviceBrief: ServiceBrief = {
+  clientName: 'Alexandra Chen',
+  email: 'alexandra.chen@meridian.capital',
+  firm: 'Meridian Capital Partners',
+  portfolioSize: 12500000,
+  mandateType: 'discretionary',
+  riskProfile: 'moderate',
+  investmentHorizon: 'long',
+  assetClass: 'equities',
+  instrument: 'inst-eq-003',
+  notes: 'ESG-focused allocation preferred. Avoid fossil fuel exposure.',
+}
+
+const instrumentsByAssetClass: Record<string, Instrument[]> = {
+  equities: [
+    { id: 'inst-eq-001', name: 'Global Equity Fund', ticker: 'GLEQ' },
+    { id: 'inst-eq-002', name: 'US Large Cap Growth', ticker: 'USLCG' },
+    { id: 'inst-eq-003', name: 'Emerging Markets Fund', ticker: 'EMMK' },
+    { id: 'inst-eq-004', name: 'Tech Innovation ETF', ticker: 'TCHIN' },
+    { id: 'inst-eq-005', name: 'Dividend Aristocrats', ticker: 'DVAR' },
+  ],
+  'fixed-income': [
+    { id: 'inst-fi-001', name: 'Global Aggregate Bond', ticker: 'GLAG' },
+    { id: 'inst-fi-002', name: 'US Treasury Fund', ticker: 'USTF' },
+    { id: 'inst-fi-003', name: 'Investment Grade Corp', ticker: 'IGCF' },
+    { id: 'inst-fi-004', name: 'High Yield Bond ETF', ticker: 'HYLD' },
+    { id: 'inst-fi-005', name: 'Municipal Bond Fund', ticker: 'MUBF' },
+  ],
+  alternatives: [
+    { id: 'inst-alt-001', name: 'Private Equity Fund', ticker: 'PEFD' },
+    { id: 'inst-alt-002', name: 'Real Estate Trust', ticker: 'RRET' },
+    { id: 'inst-alt-003', name: 'Commodities Basket', ticker: 'CMBT' },
+    { id: 'inst-alt-004', name: 'Hedge Fund Strategies', ticker: 'HDGE' },
+    { id: 'inst-alt-005', name: 'Infrastructure Fund', ticker: 'INFR' },
+  ],
+  'multi-asset': [
+    { id: 'inst-ma-001', name: 'Balanced Growth Fund', ticker: 'BALG' },
+    { id: 'inst-ma-002', name: 'Target Date 2050', ticker: 'TD50' },
+    { id: 'inst-ma-003', name: 'Risk Parity Fund', ticker: 'RSKP' },
+    { id: 'inst-ma-004', name: 'Global Allocation', ticker: 'GLAL' },
+    { id: 'inst-ma-005', name: 'Dynamic Income', ticker: 'DINC' },
+  ],
+}
+
 const bonds: Bond[] = [
   {
     id: 'bond-001',
@@ -546,5 +609,18 @@ export const handlers = [
     }
 
     return HttpResponse.json({ data: bond })
+  }),
+  http.get('/api/services/brief', () => {
+    return HttpResponse.json({ data: serviceBrief })
+  }),
+  http.get('/api/services/instruments', ({ request }: { request: Request }) => {
+    const url = new URL(request.url)
+    const assetClass = url.searchParams.get('assetClass')
+    
+    if (!assetClass || !instrumentsByAssetClass[assetClass]) {
+      return HttpResponse.json({ data: [] })
+    }
+    
+    return HttpResponse.json({ data: instrumentsByAssetClass[assetClass] })
   }),
 ]
