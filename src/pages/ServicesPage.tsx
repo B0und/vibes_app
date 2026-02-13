@@ -40,7 +40,7 @@ export default function ServicesPage() {
     clientName: z.string().min(1, 'Client name is required'),
     email: z.string().email('Invalid email address'),
     firm: z.string().min(1, 'Firm name is required'),
-    portfolioSize: z.string().min(1, 'Portfolio size is required'),
+    portfolioSize: z.string().min(1, 'Portfolio must be greater than 1'),
     mandateType: z.enum(['discretionary', 'advisory', 'execution-only'], 'Select a mandate type'),
     riskProfile: z.enum(['conservative', 'moderate', 'aggressive'], 'Select a risk profile'),
     investmentHorizon: z.enum(['short', 'medium', 'long'], 'Select investment horizon'),
@@ -55,6 +55,7 @@ export default function ServicesPage() {
     queryKey: ['service-brief'],
     queryFn: fetchServiceBrief,
     initialData: { data: {} as ServiceBrief },
+    staleTime: Infinity,
   })
 
   const {
@@ -67,7 +68,7 @@ export default function ServicesPage() {
     resolver: zodResolver(servicesSchema),
     defaultValues: {
       clientName: '',
-      email: '',
+      email: undefined,
       firm: '',
       portfolioSize: '0',
       mandateType: undefined,
@@ -92,11 +93,12 @@ export default function ServicesPage() {
     if (briefQuery.data?.data) {
       reset({
         clientName: briefQuery.data.data.clientName,
+        email: briefQuery.data.data.email,
         firm: briefQuery.data.data.firm,
         portfolioSize: String(briefQuery.data.data.portfolioSize),
       })
     }
-  })
+  }, [briefQuery.data.data, reset])
 
   const onSubmit = (data: ServicesFormValues) => {
     console.log('Form submitted:', data)
